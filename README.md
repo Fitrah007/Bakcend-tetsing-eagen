@@ -28,15 +28,17 @@ Library API adalah aplikasi backend untuk mengelola sistem perpustakaan. Aplikas
    git clone https://github.com/Fitrah007/Bakcend-tetsing-eagen.git
 
 2. **instal npm**
-
+    ```bash
     npm install
 
 3. **Buat file .env**
     Buat file .env dan sesuaikan dengan file .env.example
 
 4. **Aktifkan database**
-    jalankan - npx sequelize-cli db:migrate
-             - npx sequelize-cli db:seed:all
+    ```bash
+    npx sequelize-cli db:migrate
+    npx sequelize-cli db:seed:all
 
 5. **jalankan aplikasi**
+    ```bash
     npm run dev
