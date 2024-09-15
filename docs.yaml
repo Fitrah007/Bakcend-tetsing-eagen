@@ -1,0 +1,379 @@
+openapi: 3.0.0
+info:
+  title: Library API
+  description: API untuk mengelola buku dan anggota perpustakaan
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000/api
+    description: Local server
+paths:
+  /books:
+    get:
+      summary: Get List of Available Books
+      description: Menampilkan semua buku yang tersedia (stok > 0)
+      responses:
+        '200':
+          description: List of available books
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: List of available books
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: JK-45
+                        title:
+                          type: string
+                          example: Harry Potter
+                        author:
+                          type: string
+                          example: J.K Rowling
+                        stock:
+                          type: integer
+                          example: 1
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: 2024-09-15T00:00:00.000Z
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          example: 2024-09-15T00:00:00.000Z
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: An unexpected error occurred
+  /books/{code}:
+    get:
+      summary: Get Book Details by Code
+      description: Menampilkan detail buku berdasarkan kode buku
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+            example: JK-45
+          description: Kode buku (e.g., JK-45)
+      responses:
+        '200':
+          description: Book details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Book details
+                  data:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: JK-45
+                      title:
+                        type: string
+                        example: Harry Potter
+                      author:
+                        type: string
+                        example: J.K Rowling
+                      stock:
+                        type: integer
+                        example: 1
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: 2024-09-15T00:00:00.000Z
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        example: 2024-09-15T00:00:00.000Z
+        '404':
+          description: Book not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Book with code JK-45 not found!
+                  data:
+                    type: object
+                    example: null
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: An unexpected error occurred
+  /members:
+    get:
+      summary: Get List of Members and Their Borrowed Books
+      description: Menampilkan semua member beserta jumlah buku yang sedang dipinjam
+      responses:
+        '200':
+          description: List of members and their borrowed books
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: List of members and their borrowed books
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: M001
+                        name:
+                          type: string
+                          example: Angga
+                        booksBorrowed:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              title:
+                                type: string
+                                example: Harry Potter
+                              author:
+                                type: string
+                                example: J.K Rowling
+                              borrowDate:
+                                type: string
+                                format: date-time
+                                example: 2024-09-15T00:00:00.000Z
+                              returnDate:
+                                type: string
+                                format: date-time
+                                example: 2024-09-22T00:00:00.000Z
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: An unexpected error occurred
+  /members/borrow:
+    post:
+      summary: Borrow a Book
+      description: Member meminjam buku dengan syarat-syarat yang telah ditentukan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                member_code:
+                  type: string
+                  example: M001
+                book_code:
+                  type: string
+                  example: JK-45
+      responses:
+        '201':
+          description: Book borrowed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Book borrowed successfully!
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      memberId:
+                        type: integer
+                        example: 1
+                      bookId:
+                        type: integer
+                        example: 1
+                      borrowDate:
+                        type: string
+                        format: date-time
+                        example: 2024-09-15T00:00:00.000Z
+                      dueDate:
+                        type: string
+                        format: date-time
+                        example: 2024-09-22T00:00:00.000Z
+        '400':
+          description: Bad Request (e.g., member is currently penalized or member has reached borrowing limit)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Member is currently penalized and cannot borrow books!
+                  data:
+                    type: object
+                    example: null
+        '404':
+          description: Member or book not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Member with code M001 not found!
+                  data:
+                    type: object
+                    example: null
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: An unexpected error occurred
+  /members/return:
+    post:
+      summary: Return a Book
+      description: Member mengembalikan buku dengan memeriksa penalti
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                member_code:
+                  type: string
+                  example: M001
+                book_code:
+                  type: string
+                  example: JK-45
+      responses:
+        '200':
+          description: Book returned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Book returned successfully!
+                  data:
+                    type: object
+                    example: null
+        '400':
+          description: Bad Request (e.g., book was not borrowed by the member)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: This book was not borrowed by the member!
+                  data:
+                    type: object
+                    example: null
+        '404':
+          description: Member or book not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Member with code M001 not found!
+                  data:
+                    type: object
+                    example: null
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: An unexpected error occurred

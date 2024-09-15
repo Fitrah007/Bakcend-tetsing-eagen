@@ -1,0 +1,24 @@
+Get http://localhost:8000/api/books
+
+###
+Get http://localhost:8000/api/books/NRN-7
+
+###
+Get http://localhost:8000/api/members
+### 
+POST http://localhost:8000/api/members/borrow
+Content-Type: application/json
+
+{
+    "member_code":"234", 
+    "book_code":"HOB-83"
+}
+### 
+POST http://localhost:8000/api/members/return
+Content-Type: application/json
+
+{
+    "member_code":"M001", 
+    "book_code":"JK-45"
+}
+
